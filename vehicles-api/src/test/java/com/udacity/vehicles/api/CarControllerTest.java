@@ -4,9 +4,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -126,6 +124,29 @@ public class CarControllerTest {
         car.setId(1L);
         mvc.perform(delete(new URI(String.format("/cars/%s", car.getId()))))
                 .andExpect(status().isOk());
+    }
+
+    /**
+     * Tests the update of existed car
+     * @throws Exception if the update operation fails
+     */
+    @Test
+    public void updateCar() throws Exception {
+        Car car = getCar();
+        car.setId(1L);
+        car.setCondition(Condition.NEW);
+
+        mvc.perform(
+                put(String.format("/cars/%s", car.getId()))
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .accept(MediaType.APPLICATION_JSON_UTF8)
+                        .content(json.write(car).getJson())
+                )
+                .andExpect(status().isOk());
+
+//        mvc.perform(get(new URI(String.format("/cars/%s", car.getId()))))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.condition", is(Condition.NEW.toString())));
     }
 
     /**
